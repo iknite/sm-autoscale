@@ -60,3 +60,5 @@ tags
 # direnv
 .envrc
 
+# GCP credentials
+gcp.json

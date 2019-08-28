@@ -1,8 +1,10 @@
-variable "project_id" { type= number }
+variable "org_id" {}
+
+variable "project_id" {}
 
 resource "google_project" "sm-autoscale" {
-  name = "sm-autoscale"
-  project_id = "sm-autoscale"
-  org_id     = "${var.project_id}"
+  name       = var.project_id
+  project_id = var.project_id
+  org_id     = var.org_id
 }
 

@@ -8,12 +8,12 @@ help:  ## Show this help
 
 .envrc:
 	@cp envrc.tpl .envrc
-	########## Fill GCP_PROJECT_ID value ##########
+	########## Fill TF_VAR_project_id value ##########
 
 gcp.json:  .envrc ## Generate gcp credentials
 	@gcloud auth application-default login
 	@cd deployment/gcp_project && terraform apply
-	@gcloud config set project ${PROJECT_NAME}
-	@gcloud iam service-accounts create ${PROJECT_NAME}
+	@gcloud config set project ${TF_VAR_project_id}
+	@gcloud iam service-accounts create ${TF_VAR_project_id}
 	@gcloud iam service-accounts keys create gcp.json --iam-account=${GCP_IAM_ACCOUNT}
 

@@ -62,3 +62,6 @@ tags
 
 # GCP credentials
 gcp.json
+
+# Istio folder download
+.download

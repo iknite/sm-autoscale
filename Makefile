@@ -20,14 +20,10 @@ help:  ## Show this help
 
 gcp.json:  .envrc ## Generate gcp credentials
 	@gcloud auth application-default login
-	@cd deployment/gcp_project && terraform apply
+	@cd deployment/gcp_project && terraform init && terraform apply --auto-approve
 	@gcloud config set project ${TF_VAR_project_id}
 	@gcloud iam service-accounts create ${TF_VAR_project_id}
 	@gcloud iam service-accounts keys create gcp.json --iam-account=${GCP_IAM_ACCOUNT}
-
-.PHONY: clean
-clean: ## remove clutter
-	@git clean -f
 
 .PHONY: cred
 cred:  ## get credentials for kubectl
@@ -35,6 +31,33 @@ cred:  ## get credentials for kubectl
 		--zone ${TF_VAR_gcp_location} \
 		--project ${TF_VAR_project_id}
 
+.PHONY: infra
+infra: gcp.json  ## creates the isito cluster
+	@cd deployment/infrastructure && terraform init && terraform apply --auto-approve
+
+.PHONY: topology
+topology: ## creates the topology path to deploy
+	@go run istio.io/tools/isotope/convert kubernetes \
+		--service-image tahler/isotope-service:1  \
+		--client-image tahler/fortio:prometheus   \
+		src/service-graph.yaml > src/topology-path.yaml
+
+.PHONY: install
+install: topology ## deploy application in enviroment
+	@kubectl create -f /src/topology-path.yaml
+	@kubectl expose deployment service-graph --type=LoadBalancer --name=app
+
+.PHONY: stress
+stress:  ## stress the installation
+	@./tests/stress/stress.sh
+
+.PHONY: clean
+clean: ## remove clutter
+	@git clean -f
+
 .PHONY: wipe
-wipe: ## remove terraform state and cache files
+wipe: ## remove terraform state cache files, deployment and project in GCP. 
+	@cd deployment/infrastructure && terraform init && terraform destroy --auto-approve
+	@cd deployment/gcp_project && terraform init && terraform destroy --auto-approve
 	@git clean -fX
+

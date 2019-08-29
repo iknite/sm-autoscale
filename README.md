@@ -1,11 +1,11 @@
 # Service Mesh Autoscale Test
 
-A autoscale, (fully) automated, Infrastructure as code aproach to Istio. 
+A autoscale, (fully) automated, Infrastructure as code aproach to Istio.
 
 ## Design Overview
 
 In a world of containers and microservices, the management complexity scalates,
-understanding complex behaviours under heavy distributed workloads is 
+understanding complex behaviours under heavy distributed workloads is
 challenging to say the least, while scaling but don’t overprovision is a must.
 
 Full architectural design can be found in [ARCHITECTURE.md](./ARCHITECTURE.md)
@@ -32,6 +32,7 @@ in the .envrc file.
 - kubectl 1.15.3
 - helm 2.14.3
 - curl 7.58.0
+- golang 1.12.8
 
 ##### Optional packages
 - direnv (you must load manually perform `make .envrc` steps)

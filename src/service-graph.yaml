@@ -1,4 +1,8 @@
 ---
 apiVersion: v1alpha1
+
+# INFO: documentation can be found in 
+# https://github.com/istio/tools/tree/master/isotope
 services:
 - name: app
+  computeUsage: 50%

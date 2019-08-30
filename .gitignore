@@ -65,3 +65,5 @@ gcp.json
 
 # Istio folder download
 .download
+tests/stress/metrics/
+topology-path.yaml

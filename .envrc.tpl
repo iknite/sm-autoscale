@@ -31,3 +31,11 @@ export TF_VAR_green_cluster_name="green-cluster"
 export TF_VAR_green_cluster_location=${TF_VAR_gcp_location}
 
 export TF_VAR_green_enabled=0
+
+
+# Application autocale boundaries
+export APP_CPU=50 #percentaje
+
+export APP_MIN=1
+
+export APP_MAX=10

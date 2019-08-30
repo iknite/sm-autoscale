@@ -13,7 +13,6 @@ help:  ## Show this help
 	##################################
 	#
 	# > launching editor in 5, 4, ...
-	#
 	@sleep 5
 	@${EDITOR} .envrc
 	@direnv allow
@@ -37,15 +36,17 @@ infra: gcp.json  ## creates the isito cluster
 
 .PHONY: topology
 topology: ## creates the topology path to deploy
+	@go get istio.io/tools/isotope/convert
 	@go run istio.io/tools/isotope/convert kubernetes \
 		--service-image tahler/isotope-service:1  \
 		--client-image tahler/fortio:prometheus   \
 		src/service-graph.yaml > src/topology-path.yaml
 
-.PHONY: install
-install: topology ## deploy application in enviroment
-	@kubectl create -f /src/topology-path.yaml
-	@kubectl expose deployment service-graph --type=LoadBalancer --name=app
+.PHONY: deploy
+deploy: ## deploy application in enviroment
+	@kubectl create -f src/topology-path.yaml
+	@kubectl -n service-graph autoscale deployment app --cpu-percent=${APP_CPU} --min=${APP_MIN} --max=${APP_MAX}
+	@kubectl patch svc client -p '{"spec": {"type": "LoadBalancer"}}'
 
 .PHONY: stress
 stress:  ## stress the installation

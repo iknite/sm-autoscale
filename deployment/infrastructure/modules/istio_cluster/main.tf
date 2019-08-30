@@ -8,7 +8,7 @@ resource "google_container_cluster" "gke_cluster" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = true
-  initial_node_count = 1
+  initial_node_count = 2
 
   min_master_version = var.gke_version
 

@@ -17,9 +17,13 @@ help:  ## Show this help
 	@${EDITOR} .envrc
 	@direnv allow
 
-gcp.json:  .envrc ## Generate gcp credentials
+.PHONY: gcp_project
+gcp_project: .envrc  ## create gcp_project
 	@gcloud auth application-default login
 	@cd deployment/gcp_project && terraform init && terraform apply --auto-approve
+
+gcp.json: .envrc  ## Generate gcp credentials
+	@gcloud auth application-default login
 	@gcloud config set project ${TF_VAR_project_id}
 	@gcloud iam service-accounts create ${TF_VAR_project_id}
 	@gcloud iam service-accounts keys create gcp.json --iam-account=${GCP_IAM_ACCOUNT}
@@ -36,7 +40,7 @@ infra: gcp.json  ## creates the isito cluster
 
 .PHONY: topology
 topology: ## creates the topology path to deploy
-	@go get istio.io/tools/isotope/convert
+	@go mod download
 	@go run istio.io/tools/isotope/convert kubernetes \
 		--service-image tahler/isotope-service:1  \
 		--client-image tahler/fortio:prometheus   \
